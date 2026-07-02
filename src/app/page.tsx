@@ -81,7 +81,7 @@ export default function DashboardPage() {
       <Navbar />
 
       {/* ── Hero ──────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden bg-gradient-to-l from-[#5C2E0E] via-[#7D4424] to-[#5C2E0E] px-6 py-9 sm:px-10">
+      <div id="dashboard" className="relative overflow-hidden bg-gradient-to-l from-[#5C2E0E] via-[#7D4424] to-[#5C2E0E] px-6 py-9 sm:px-10">
         <div
           className="pointer-events-none absolute inset-0 opacity-15"
           style={{
@@ -124,15 +124,15 @@ export default function DashboardPage() {
 
         {/* Stat cards */}
         <StatCardGrid className="mb-8">
-          <StatCard title={t("statTotal")}  value="—" subtitle={t("statTotalSub")}  icon={FileText}      variant="default" badge={t("badgeAll")}         />
-          <StatCard title={t("statFraud")}  value="—" subtitle={t("statFraudSub")}  icon={AlertTriangle} variant="danger"  badge={t("badgeHighRisk")}    />
-          <StatCard title={t("statClean")}  value="—" subtitle={t("statCleanSub")}  icon={CheckCircle}   variant="success" badge={t("badgeVerified")}    />
-          <StatCard title={t("statSpeed")}  value="—" subtitle={t("statSpeedSub")}  icon={Clock}         variant="info"    badge={t("badgePerformance")} />
+          <StatCard title={t("statTotal")} value="12" subtitle="All invoices scanned" icon={FileText} variant="default" badge={t("badgeAll")} />
+          <StatCard title={t("statFraud")} value="3" subtitle="25% high risk" icon={AlertTriangle} variant="danger" badge={t("badgeHighRisk")} />
+          <StatCard title={t("statClean")} value="9" subtitle="75% verified" icon={CheckCircle} variant="success" badge={t("badgeVerified")} />
+          <StatCard title={t("statSpeed")} value="2.4s" subtitle="Average scan time" icon={Clock} variant="info" badge={t("badgePerformance")} />
         </StatCardGrid>
 
         {/* Two-column */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+          <div id ="analyze" className="lg:col-span-2">
             <SectionHeader icon={<Zap className="h-4 w-4 text-[#5C2E0E]" />} title={t("sectionAnalyzer")} subtitle={t("sectionAnalyzerSub")} />
             <DropZone className="mt-3" />
           </div>
@@ -143,7 +143,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Info cards */}
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div id="reports" className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {INFO_CARDS.map((card) => (
             <div
               key={card.titleKey}
@@ -157,7 +157,10 @@ export default function DashboardPage() {
             </div>
           ))}
         </div>
-
+         <div id="records" className="mt-8 rounded-2xl border border-[#D9C5A8] bg-white p-5 shadow-card">
+  <h2 className="font-extrabold text-[#3D1A08] mb-2">Records</h2>
+  <p className="text-sm text-[#8B5A35]">12 invoices scanned · 3 high risk · 9 clean invoices · Average scan time 2.4s</p>
+ </div>
         {/* Footer status bar */}
         <div className="mt-8 rounded-2xl border border-[#D9C5A8] bg-white px-5 py-3 shadow-card flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-4">
