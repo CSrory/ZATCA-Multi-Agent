@@ -91,3 +91,7 @@ export function Navbar({ className }: NavbarProps) {
     </header>
   );
 }
+  </div>
+    </header>
+  );
+}
