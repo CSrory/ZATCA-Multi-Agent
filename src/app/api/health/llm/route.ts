@@ -3,7 +3,6 @@ import { generateText } from "ai";
 import {
   getActiveProvider,
   getTextModel,
-  getVisionModel
   GROQ_TEXT_MODEL,
   GROQ_VISION_MODEL,
 } from "@/lib/agents/llm";
