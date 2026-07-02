@@ -1,0 +1,78 @@
+/* Tajawal is loaded via next/font/google in layout.tsx */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --background:              38 60% 97%;
+    --foreground:              20 70% 14%;
+    --card:                    0 0% 100%;
+    --card-foreground:         20 70% 14%;
+    --popover:                 0 0% 100%;
+    --popover-foreground:      20 70% 14%;
+    --primary:                 20 80% 23%;
+    --primary-foreground:      38 60% 97%;
+    --secondary:               30 35% 91%;
+    --secondary-foreground:    20 70% 22%;
+    --muted:                   35 30% 93%;
+    --muted-foreground:        25 25% 50%;
+    --accent:                  30 45% 85%;
+    --accent-foreground:       20 70% 18%;
+    --destructive:             4 74% 46%;
+    --destructive-foreground:  0 0% 100%;
+    --border:                  28 30% 85%;
+    --input:                   28 25% 88%;
+    --ring:                    20 80% 23%;
+    --radius:                  0.75rem;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+    outline-color: hsl(var(--ring) / 0.4);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  body {
+    background-color: #FAF5EE;
+    color: hsl(var(--foreground));
+    min-height: 100vh;
+    font-family: var(--font-tajawal), "Tajawal", system-ui, sans-serif;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #EDE0CC; }
+  ::-webkit-scrollbar-thumb { background: #8B5A35; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #6B3518; }
+}
+
+@layer components {
+  .alinma-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(93, 46, 14, 0.10);
+    box-shadow: 0 2px 12px rgba(93, 46, 14, 0.07);
+    border-radius: var(--radius);
+  }
+
+  .alinma-surface {
+    background: linear-gradient(135deg, #FAF5EE 0%, #EDE0CC 100%);
+    border: 1px solid rgba(93, 46, 14, 0.12);
+  }
+
+  /* Removes black PNG background from logo on light bg */
+  .logo-blend {
+    mix-blend-mode: multiply;
+    filter: contrast(1.05);
+  }
+}

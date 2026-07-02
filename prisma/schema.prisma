@@ -1,0 +1,113 @@
+// ═══════════════════════════════════════════════════════════
+//  Bidiqqah — ZATCA Invoice Fraud Detection
+//  Database: PostgreSQL via Supabase (Production-Ready Cloud)
+// ═══════════════════════════════════════════════════════════
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Invoice ──────────────────────────────────────────────
+model Invoice {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // File metadata
+  fileName  String
+  fileType  String        // "pdf" | "xml" | "image"
+  fileSize  Int
+  mimeType  String
+
+  // Supabase Storage — signed public URL (file not stored locally)
+  fileUrl   String?       @db.Text
+
+  // Raw extracted content (capped at DB limits)
+  rawText   String?       @db.Text
+  rawXml    String?       @db.Text
+
+  // ── ZATCA QR Code fields (TLV decoded — all 9 tags) ─────
+  qrBase64    String?     @db.Text  // original Base64 QR payload
+  sellerName  String?               // Tag 1
+  vatNumber   String?               // Tag 2 — 15 digits, starts/ends with 3
+  invoiceDate String?               // Tag 3 — ISO 8601 timestamp
+  totalAmount String?               // Tag 4 — invoice total with VAT
+  vatAmount   String?               // Tag 5 — VAT total
+  xmlHash     String?               // Tag 6 — SHA-256 hex
+  ecdsaSig    String?     @db.Text  // Tag 7 — ECDSA signature (base64)
+  publicKey   String?     @db.Text  // Tag 8 — ECDSA public key (base64)
+  zatcaStamp  String?     @db.Text  // Tag 9 — ZATCA CA stamp
+
+  // ── Risk result ─────────────────────────────────────────
+  // status: "PENDING" | "ANALYZING" | "CLEAN" | "SUSPICIOUS" | "FRAUD"
+  status    String  @default("PENDING")
+  riskScore Float?
+  // riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"
+  riskLevel String?
+
+  // Relations
+  analysis   InvoiceAnalysis?
+  fraudFlags FraudFlag[]
+
+  @@index([status])
+  @@index([vatNumber])
+  @@index([createdAt])
+}
+
+// ─── Invoice Analysis ─────────────────────────────────────
+model InvoiceAnalysis {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  invoiceId String  @unique
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  // ── ZATCA deterministic checks ───────────────────────────
+  qrFound        Boolean @default(false)
+  vatNumberValid Boolean @default(false)
+  dateValid      Boolean @default(false)
+  hashPresent    Boolean @default(false)
+  sigPresent     Boolean @default(false)
+  vatCalcValid   Boolean @default(false)   // BR-CO-17
+  totalCalcValid Boolean @default(false)   // BR-KSA-50
+  hashChainValid Boolean @default(false)   // BR-KSA-61
+
+  // ── Multi-Agent results (JSON stored as text) ────────────
+  // Each agent: { status, confidence, findings[], summary, summaryAr }
+  visionAgentResult    String? @db.Text
+  forensicsAgentResult String? @db.Text
+  marketAgentResult    String? @db.Text
+
+  // ── Final consolidated summary ───────────────────────────
+  explanation   String? @db.Text
+  explanationAr String? @db.Text
+}
+
+// ─── Fraud Flag ───────────────────────────────────────────
+model FraudFlag {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  // Official ZATCA rule codes: BR-KSA-XX, BR-CO-XX, or custom BIDI-XX
+  ruleCode  String
+  // "INFO" | "WARNING" | "CRITICAL"
+  severity  String
+  messageEn String  @db.Text
+  messageAr String  @db.Text
+
+  // Which agent raised this flag
+  // "ZATCA" | "VISION" | "FORENSICS" | "MARKET"
+  source    String  @default("ZATCA")
+
+  @@index([invoiceId])
+  @@index([ruleCode])
+}
