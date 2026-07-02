@@ -14,10 +14,10 @@ export function Navbar({ className }: NavbarProps) {
   const { t, lang, toggleLang } = useLang();
 
   const NAV_LINKS = [
-    { key: "navDashboard" as const, href: "/", icon: LayoutDashboard, active: true  },
-    { key: "navAnalyze"   as const, href: "#analyze", icon: FileSearch,       active: false },
-    { key: "navReports"   as const, href: "#reports", icon: BarChart3,        active: false },
-    { key: "navRecords"   as const, href: "#records", icon: Database,         active: false },
+    { key: "navDashboard" as const, href: "#dashboard", icon: LayoutDashboard, active: true },
+    { key: "navAnalyze" as const, href: "#analyze", icon: FileSearch, active: false },
+    { key: "navReports" as const, href: "#reports", icon: BarChart3, active: false },
+    { key: "navRecords" as const, href: "#records", icon: Database, active: false },
   ];
 
   return (
